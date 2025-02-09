@@ -6,6 +6,10 @@ const linearClient = new LinearClient({
   apiKey: process.env.LINEAR_API_KEY || "",
 });
 
+app.get("/", (c) => {
+  return c.text("Hello, World!");
+});
+
 app.post("/sync-issues", async (c) => {
   const issuesConn = await linearClient.issues();
   const issues = issuesConn.nodes;
