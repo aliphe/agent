@@ -2,6 +2,8 @@ package tool
 
 import (
 	"context"
+	"fmt"
+	"os/user"
 )
 
 type Name struct {
@@ -23,5 +25,9 @@ func (h *Name) Functions() []Function {
 }
 
 func (h *Name) Call(ctx context.Context, _ string, _ map[string]any) (map[string]any, error) {
-	return map[string]any{"name": "Matthias Alif"}, nil
+	currentUser, err := user.Current()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get current user: %w", err)
+	}
+	return map[string]any{"name": currentUser.Username}, nil
 }

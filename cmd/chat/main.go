@@ -28,7 +28,7 @@ func main() {
 	ctx := context.Background()
 
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("Chat started. Type 'exit' to quit.")
+	fmt.Println("Skipery started. Type 'exit' to quit.")
 
 	for {
 		fmt.Print("> ")
