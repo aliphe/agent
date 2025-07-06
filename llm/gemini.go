@@ -84,11 +84,11 @@ func fromConversation(conversation []*agent.Message) []*genai.Content {
 
 func (g *Gemini) SendMessage(ctx context.Context, tb tool.ToolBelt, conversation []*agent.Message) (*agent.Message, error) {
 	slog.Debug("generating content", "conversation", conversation)
+	history := fromConversation(conversation)
 	content, err := g.cli.Models.GenerateContent(
 		ctx,
 		"gemini-2.0-flash",
-		fromConversation(conversation),
-		// nil,
+		history,
 		&genai.GenerateContentConfig{Tools: fromToolBelt(tb)},
 	)
 	if err != nil {
