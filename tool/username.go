@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os/user"
+
+	"github.com/aliphe/skipery/pkg/jsonschema"
 )
 
 type UserName struct {
@@ -19,7 +21,7 @@ func (h *UserName) Functions() []Function {
 			ID:          "user_name",
 			DisplayName: "User Name",
 			Description: "Returns the current user's name",
-			Parameters:  []Parameter{},
+			Parameters:  jsonschema.JSONSchema{},
 		},
 	}
 }

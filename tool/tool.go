@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
+	"github.com/aliphe/skipery/pkg/jsonschema"
 )
 
 type Tool interface {
@@ -23,7 +25,7 @@ type Function struct {
 	Description string
 
 	// A JSON schema describing the tool's parameters
-	Parameters []Parameter
+	Parameters jsonschema.JSONSchema
 }
 
 type Parameter struct {

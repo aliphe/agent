@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/aliphe/skipery/agent"
+	"github.com/aliphe/skipery/pkg/jsonschema"
 	"github.com/aliphe/skipery/tool"
 	"google.golang.org/genai"
 )
@@ -19,7 +20,21 @@ func NewGemini(cli *genai.Client) *Gemini {
 	}
 }
 
-func fromToolBelt(tb tool.ToolBelt) []*genai.Tool {
+func fromJSONSchema(sch jsonschema.JSONSchema) *genai.Schema {
+	props := make(map[string]*genai.Schema)
+	for k, prop := range sch.Properties {
+		props[k] = fromJSONSchema(prop)
+	}
+
+	return &genai.Schema{
+		Type:             genai.TypeObject,
+		Properties:       props,
+		Required:         sch.Required,
+		PropertyOrdering: sch.PropertyOrdering,
+	}
+}
+
+func fromToolBelt(tb tool.ToolBelt) ([]*genai.Tool, error) {
 	var tools []*genai.Tool
 	for _, tool := range tb {
 		for _, fct := range tool.Functions() {
@@ -28,13 +43,13 @@ func fromToolBelt(tb tool.ToolBelt) []*genai.Tool {
 					{
 						Name:        fct.ID,
 						Description: fct.Description,
-						// ParametersJsonSchema: tool.Parameters,
+						Parameters:  fromJSONSchema(fct.Parameters),
 					},
 				},
 			})
 		}
 	}
-	return tools
+	return tools, nil
 }
 
 func fromConversation(conversation []*agent.Message) []*genai.Content {
@@ -85,11 +100,15 @@ func fromConversation(conversation []*agent.Message) []*genai.Content {
 func (g *Gemini) SendMessage(ctx context.Context, tb tool.ToolBelt, conversation []*agent.Message) (*agent.Message, error) {
 	slog.Debug("generating content", "conversation", conversation)
 	history := fromConversation(conversation)
+	tools, err := fromToolBelt(tb)
+	if err != nil {
+		return nil, err
+	}
 	content, err := g.cli.Models.GenerateContent(
 		ctx,
-		"gemini-2.0-flash",
+		"gemini-2.5-flash-lite-preview-06-17",
 		history,
-		&genai.GenerateContentConfig{Tools: fromToolBelt(tb)},
+		&genai.GenerateContentConfig{Tools: tools},
 	)
 	if err != nil {
 		return nil, err
