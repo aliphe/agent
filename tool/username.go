@@ -11,11 +11,11 @@ import (
 type UserName struct {
 }
 
-func NewUserName() *UserName {
-	return &UserName{}
+func NewUserName() *Math {
+	return &Math{}
 }
 
-func (h *UserName) Functions() []Function {
+func (un *UserName) Functions() []Function {
 	return []Function{
 		{
 			ID:          "user_name",
@@ -26,7 +26,7 @@ func (h *UserName) Functions() []Function {
 	}
 }
 
-func (h *UserName) Call(ctx context.Context, _ string, _ map[string]any) (map[string]any, error) {
+func (un *UserName) Call(ctx context.Context, _ string, _ map[string]any) (map[string]any, error) {
 	currentUser, err := user.Current()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get current user: %w", err)
