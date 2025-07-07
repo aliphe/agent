@@ -26,6 +26,9 @@ type Function struct {
 
 	// A JSON schema describing the tool's parameters
 	Parameters jsonschema.JSONSchema
+
+	// A JSON schema describing the tool's response
+	Response jsonschema.JSONSchema
 }
 
 type Parameter struct {

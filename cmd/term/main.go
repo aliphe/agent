@@ -33,7 +33,7 @@ func main() {
 	}
 	defer db.Close()
 
-	toolBelt := tool.NewToolBelt(tool.NewUserName(), tool.NewMath())
+	toolBelt := tool.NewToolBelt(tool.NewUserName(), tool.NewMath(), tool.NewSQL(db))
 	chatStore := store.NewChatStore(db)
 	agent := agent.NewAgent(toolBelt, chatStore, llm.NewGemini(geminiClient))
 

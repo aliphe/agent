@@ -5,4 +5,5 @@ type JSONSchema struct {
 	Properties       map[string]JSONSchema `json:"properties"`
 	Required         []string              `json:"required"`
 	PropertyOrdering []string              `json:"propertyOrdering"`
+	Items            *JSONSchema           `json:"items"`
 }

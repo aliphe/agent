@@ -22,6 +22,14 @@ func (un *UserName) Functions() []Function {
 			DisplayName: "User Name",
 			Description: "Returns the current user's name",
 			Parameters:  jsonschema.JSONSchema{},
+			Response: jsonschema.JSONSchema{
+				Type: "object",
+				Properties: map[string]jsonschema.JSONSchema{
+					"name": {
+						Type: "string",
+					},
+				},
+			},
 		},
 	}
 }

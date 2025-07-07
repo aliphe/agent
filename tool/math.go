@@ -23,14 +23,22 @@ func (h *Math) Functions() []Function {
 			Parameters: jsonschema.JSONSchema{
 				Type: "object",
 				Properties: map[string]jsonschema.JSONSchema{
-					"a": jsonschema.JSONSchema{
+					"a": {
 						Type: "number",
 					},
-					"b": jsonschema.JSONSchema{
+					"b": {
 						Type: "number",
 					},
 				},
 				Required: []string{"a", "b"},
+			},
+			Response: jsonschema.JSONSchema{
+				Type: "object",
+				Properties: map[string]jsonschema.JSONSchema{
+					"result": {
+						Type: "number",
+					},
+				},
 			},
 		},
 		{
@@ -40,15 +48,23 @@ func (h *Math) Functions() []Function {
 			Parameters: jsonschema.JSONSchema{
 				Type: "object",
 				Properties: map[string]jsonschema.JSONSchema{
-					"a": jsonschema.JSONSchema{
+					"a": {
 						Type: "number",
 					},
-					"b": jsonschema.JSONSchema{
+					"b": {
 						Type: "number",
 					},
 				},
 				Required:         []string{"a", "b"},
 				PropertyOrdering: []string{"a", "b"},
+			},
+			Response: jsonschema.JSONSchema{
+				Type: "object",
+				Properties: map[string]jsonschema.JSONSchema{
+					"result": {
+						Type: "number",
+					},
+				},
 			},
 		},
 	}

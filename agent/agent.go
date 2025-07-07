@@ -42,6 +42,12 @@ func (a *Agent) SendMessage(ctx context.Context, chatID string, msg string) ([]*
 	newChat := false
 	if len(messages) == 0 {
 		newChat = true
+		// Add system prompt for new chats to make the agent eager to use tools
+		systemPrompt := &chat.Message{
+			Author: chat.AuthorSystem,
+			Text:   "You are a helpful AI assistant with access to various tools. You should actively use the available tools to help users accomplish their tasks. When a user asks for something that could benefit from using a tool, always prefer using the appropriate tool rather than just providing a text response. Be proactive in suggesting and using tools that can provide more accurate, up-to-date, or comprehensive information. Your goal is to leverage your tools effectively to give users the best possible assistance.",
+		}
+		messages = append([]*chat.Message{systemPrompt}, messages...)
 	}
 
 	msgs, err := a.sendMessage(ctx, append(messages, &chat.Message{

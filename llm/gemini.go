@@ -35,17 +35,27 @@ func fromJSONSchema(sch jsonschema.JSONSchema) *genai.Schema {
 }
 
 func fromToolBelt(tb tool.ToolBelt) ([]*genai.Tool, error) {
+	toolMap := make(map[tool.Tool]bool)
 	var tools []*genai.Tool
-	for _, tool := range tb {
-		for _, fct := range tool.Functions() {
+
+	for _, t := range tb {
+		if toolMap[t] {
+			continue // Skip duplicate tools
+		}
+		toolMap[t] = true
+
+		var functionDeclarations []*genai.FunctionDeclaration
+		for _, fct := range t.Functions() {
+			functionDeclarations = append(functionDeclarations, &genai.FunctionDeclaration{
+				Name:        fct.ID,
+				Description: fct.Description,
+				Parameters:  fromJSONSchema(fct.Parameters),
+				Response:    fromJSONSchema(fct.Response),
+			})
+		}
+		if len(functionDeclarations) > 0 {
 			tools = append(tools, &genai.Tool{
-				FunctionDeclarations: []*genai.FunctionDeclaration{
-					{
-						Name:        fct.ID,
-						Description: fct.Description,
-						Parameters:  fromJSONSchema(fct.Parameters),
-					},
-				},
+				FunctionDeclarations: functionDeclarations,
 			})
 		}
 	}
@@ -84,13 +94,18 @@ func fromChat(messages []*chat.Message) []*genai.Content {
 				})
 			}
 		} else {
+			// Handle system messages by using user role (Gemini doesn't have system role)
+			role := string(msg.Author)
+			if msg.Author == chat.AuthorSystem {
+				role = "user"
+			}
 			parts = append(parts, &genai.Content{
 				Parts: []*genai.Part{
 					{
 						Text: msg.Text,
 					},
 				},
-				Role: string(msg.Author),
+				Role: role,
 			})
 		}
 	}
@@ -106,7 +121,7 @@ func (g *Gemini) SendMessage(ctx context.Context, tb tool.ToolBelt, messages []*
 	}
 	content, err := g.cli.Models.GenerateContent(
 		ctx,
-		"gemini-2.5-flash-lite-preview-06-17",
+		"gemini-2.0-flash",
 		history,
 		&genai.GenerateContentConfig{Tools: tools},
 	)

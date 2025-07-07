@@ -3,8 +3,9 @@ package chat
 type Author string
 
 const (
-	AuthorUser  Author = "user"
-	AuthorModel Author = "model"
+	AuthorUser   Author = "user"
+	AuthorModel  Author = "model"
+	AuthorSystem Author = "system"
 )
 
 type Chat struct {
