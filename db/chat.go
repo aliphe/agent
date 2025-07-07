@@ -57,6 +57,9 @@ func NewChatStore(db *sqlx.DB) *ChatStore {
 	return &ChatStore{db: db}
 }
 
+// Ensure ChatStore implements chat.Store interface
+var _ chat.Store = (*ChatStore)(nil)
+
 func (s *ChatStore) Save(ctx context.Context, id, title string) (string, error) {
 	if _, err := s.db.Exec("INSERT INTO chats (id, title, created_at) VALUES (?, ?, ?)",
 		id, title, time.Now()); err != nil {
