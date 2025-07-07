@@ -80,6 +80,10 @@ func (a *Agent) chatName(ctx context.Context, messages []*chat.Message) (string,
 }
 
 func (a *Agent) sendMessage(ctx context.Context, messages []*chat.Message) ([]*chat.Message, error) {
+	return a.sendMessageWithRetry(ctx, messages, 0)
+}
+
+func (a *Agent) sendMessageWithRetry(ctx context.Context, messages []*chat.Message, retryCount int) ([]*chat.Message, error) {
 	rsp, err := a.model.SendMessage(ctx, a.toolBelt, messages)
 	if err != nil {
 		return nil, err
@@ -92,16 +96,28 @@ func (a *Agent) sendMessage(ctx context.Context, messages []*chat.Message) ([]*c
 			Author:            chat.AuthorUser,
 			FunctionResponses: make(chat.FunctionResponse),
 		}
+		var error error
 		for _, c := range rsp.FunctionCalls {
 			toolRes, err := a.toolBelt.Call(ctx, c.Name, c.Args)
 			if err != nil {
-				return nil, err
+				error = err
+				message.FunctionResponses[c.Name] = map[string]any{
+					"error": err.Error(),
+				}
+			} else {
+				message.FunctionResponses[c.Name] = toolRes
 			}
-			message.FunctionResponses[c.Name] = toolRes
 		}
 
 		msgs = append(msgs, message)
-		return a.sendMessage(ctx, msgs)
+
+		// If there are errors and we haven't exceeded retry limit, try again
+		if error != nil && retryCount < 3 {
+			slog.Info("tool errors encountered, retrying", "retryCount", retryCount+1, "err", err)
+			return a.sendMessageWithRetry(ctx, msgs, retryCount+1)
+		}
+
+		return a.sendMessageWithRetry(ctx, msgs, retryCount)
 	}
 
 	return msgs, nil

@@ -26,12 +26,38 @@ func fromJSONSchema(sch jsonschema.JSONSchema) *genai.Schema {
 		props[k] = fromJSONSchema(prop)
 	}
 
-	return &genai.Schema{
-		Type:             genai.TypeObject,
+	// Convert type string to genai type
+	var schemaType genai.Type
+	switch sch.Type {
+	case "object":
+		schemaType = genai.TypeObject
+	case "array":
+		schemaType = genai.TypeArray
+	case "string":
+		schemaType = genai.TypeString
+	case "number":
+		schemaType = genai.TypeNumber
+	case "integer":
+		schemaType = genai.TypeInteger
+	case "boolean":
+		schemaType = genai.TypeBoolean
+	default:
+		schemaType = genai.TypeObject
+	}
+
+	schema := &genai.Schema{
+		Type:             schemaType,
+		Description:      sch.Description,
 		Properties:       props,
 		Required:         sch.Required,
 		PropertyOrdering: sch.PropertyOrdering,
 	}
+
+	if sch.Items != nil {
+		schema.Items = fromJSONSchema(*sch.Items)
+	}
+
+	return schema
 }
 
 func fromToolBelt(tb tool.ToolBelt) ([]*genai.Tool, error) {

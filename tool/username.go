@@ -20,13 +20,20 @@ func (un *UserName) Functions() []Function {
 		{
 			ID:          "user_name",
 			DisplayName: "User Name",
-			Description: "Returns the current user's name",
-			Parameters:  jsonschema.JSONSchema{},
+			Description: "Retrieves the current system user's username. Use this function when you need to know who is currently logged in or when personalizing responses.",
+			Parameters: jsonschema.JSONSchema{
+				Type:        "object",
+				Description: "No parameters required for this function",
+				Properties:  map[string]jsonschema.JSONSchema{},
+			},
 			Response: jsonschema.JSONSchema{
-				Type: "object",
+				Type:        "object",
+				Description: "The current user's information",
 				Properties: map[string]jsonschema.JSONSchema{
 					"name": {
-						Type: "string",
+						Type:        "string",
+						Description: "The username of the currently logged-in user",
+						Examples:    []any{"john", "admin", "user123"},
 					},
 				},
 			},

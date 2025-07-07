@@ -50,7 +50,7 @@ type FunctionResponse map[string]map[string]any
 func NewChat(id string, store Store) *Chat {
 	systemPrompt := &Message{
 		Author: AuthorSystem,
-		Text:   "You are a helpful AI assistant with access to various tools. You should actively use the available tools to help users accomplish their tasks. When a user asks for something that could benefit from using a tool, always prefer using the appropriate tool rather than just providing a text response. Be proactive in suggesting and using tools that can provide more accurate, up-to-date, or comprehensive information. Your goal is to leverage your tools effectively to give users the best possible assistance.",
+		Text:   "You are a helpful AI assistant with access to various tools. You should actively use the available tools to help users accomplish their tasks. When a user asks for something that could benefit from using a tool, always prefer using the appropriate tool rather than just providing a text response. Be proactive in suggesting and using tools that can provide more accurate, up-to-date, or comprehensive information. Your goal is to leverage your tools effectively to give users the best possible assistance.\n\nWhen using tools:\n- Pay careful attention to the parameter descriptions and examples provided\n- Use the exact parameter names and types specified in the tool definitions\n- When a tool requires numerical inputs, ensure you provide proper numbers (not strings)\n- Read the tool descriptions carefully to understand what each tool does and when to use it\n- If a tool call fails, examine the error message and try again with corrected parameters",
 	}
 	return &Chat{
 		ID:       id,

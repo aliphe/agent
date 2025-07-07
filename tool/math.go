@@ -19,24 +19,32 @@ func (h *Math) Functions() []Function {
 		{
 			ID:          "sum",
 			DisplayName: "Sum",
-			Description: "Returns the sum of the two provided numbers",
+			Description: "Calculates the sum of two numbers. Use this function when you need to add two numerical values together.",
 			Parameters: jsonschema.JSONSchema{
-				Type: "object",
+				Type:        "object",
+				Description: "Parameters for the sum operation",
 				Properties: map[string]jsonschema.JSONSchema{
 					"a": {
-						Type: "number",
+						Type:        "number",
+						Description: "The first number to add. Can be any positive or negative number, including decimals.",
+						Examples:    []any{5, 10.5, -3.2, 0},
 					},
 					"b": {
-						Type: "number",
+						Type:        "number",
+						Description: "The second number to add. Can be any positive or negative number, including decimals.",
+						Examples:    []any{3, 7.8, -1.5, 0},
 					},
 				},
-				Required: []string{"a", "b"},
+				Required:         []string{"a", "b"},
+				PropertyOrdering: []string{"a", "b"},
 			},
 			Response: jsonschema.JSONSchema{
-				Type: "object",
+				Type:        "object",
+				Description: "The result of the sum operation",
 				Properties: map[string]jsonschema.JSONSchema{
 					"result": {
-						Type: "number",
+						Type:        "number",
+						Description: "The sum of the two input numbers",
 					},
 				},
 			},
@@ -44,25 +52,32 @@ func (h *Math) Functions() []Function {
 		{
 			ID:          "subtract",
 			DisplayName: "Subtract",
-			Description: "Returns the difference of the two provided numbers",
+			Description: "Calculates the difference between two numbers (a - b). Use this function when you need to subtract one number from another.",
 			Parameters: jsonschema.JSONSchema{
-				Type: "object",
+				Type:        "object",
+				Description: "Parameters for the subtraction operation",
 				Properties: map[string]jsonschema.JSONSchema{
 					"a": {
-						Type: "number",
+						Type:        "number",
+						Description: "The minuend (number to subtract from). Can be any positive or negative number, including decimals.",
+						Examples:    []any{10, 5.5, -2.3, 0},
 					},
 					"b": {
-						Type: "number",
+						Type:        "number",
+						Description: "The subtrahend (number to subtract). Can be any positive or negative number, including decimals.",
+						Examples:    []any{3, 2.2, -1.8, 0},
 					},
 				},
 				Required:         []string{"a", "b"},
 				PropertyOrdering: []string{"a", "b"},
 			},
 			Response: jsonschema.JSONSchema{
-				Type: "object",
+				Type:        "object",
+				Description: "The result of the subtraction operation",
 				Properties: map[string]jsonschema.JSONSchema{
 					"result": {
-						Type: "number",
+						Type:        "number",
+						Description: "The difference between the two input numbers (a - b)",
 					},
 				},
 			},
