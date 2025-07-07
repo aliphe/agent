@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/aliphe/skipery/agent"
+	"github.com/aliphe/skipery/agent/chat"
 	"github.com/aliphe/skipery/pkg/jsonschema"
 	"github.com/aliphe/skipery/tool"
 	"google.golang.org/genai"
@@ -52,9 +52,9 @@ func fromToolBelt(tb tool.ToolBelt) ([]*genai.Tool, error) {
 	return tools, nil
 }
 
-func fromConversation(conversation []*agent.Message) []*genai.Content {
+func fromChat(messages []*chat.Message) []*genai.Content {
 	var parts []*genai.Content
-	for _, msg := range conversation {
+	for _, msg := range messages {
 		if len(msg.FunctionCalls) != 0 {
 			for _, call := range msg.FunctionCalls {
 				parts = append(parts, &genai.Content{
@@ -97,9 +97,9 @@ func fromConversation(conversation []*agent.Message) []*genai.Content {
 	return parts
 }
 
-func (g *Gemini) SendMessage(ctx context.Context, tb tool.ToolBelt, conversation []*agent.Message) (*agent.Message, error) {
-	slog.Debug("generating content", "conversation", conversation)
-	history := fromConversation(conversation)
+func (g *Gemini) SendMessage(ctx context.Context, tb tool.ToolBelt, messages []*chat.Message) (*chat.Message, error) {
+	slog.Debug("generating content", "chat", messages)
+	history := fromChat(messages)
 	tools, err := fromToolBelt(tb)
 	if err != nil {
 		return nil, err
@@ -115,13 +115,13 @@ func (g *Gemini) SendMessage(ctx context.Context, tb tool.ToolBelt, conversation
 	}
 	slog.Debug("received response from gemini", "content", content)
 
-	res := &agent.Message{
-		Author: agent.AuthorModel,
+	res := &chat.Message{
+		Author: chat.AuthorModel,
 		Text:   content.Text(),
 	}
 
 	for _, fc := range content.FunctionCalls() {
-		res.FunctionCalls = append(res.FunctionCalls, agent.FunctionCall{
+		res.FunctionCalls = append(res.FunctionCalls, chat.FunctionCall{
 			Name: fc.Name,
 			Args: fc.Args,
 		})

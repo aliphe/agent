@@ -11,8 +11,8 @@ import (
 type UserName struct {
 }
 
-func NewUserName() *Math {
-	return &Math{}
+func NewUserName() *UserName {
+	return &UserName{}
 }
 
 func (un *UserName) Functions() []Function {

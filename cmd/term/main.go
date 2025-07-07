@@ -33,16 +33,16 @@ func main() {
 	}
 	defer db.Close()
 
-	toolBelt := tool.NewToolBelt(tool.NewUserName())
-	convStore := store.NewConversationStore(db)
-	agent := agent.NewAgent(toolBelt, convStore, llm.NewGemini(geminiClient))
+	toolBelt := tool.NewToolBelt(tool.NewUserName(), tool.NewMath())
+	chatStore := store.NewChatStore(db)
+	agent := agent.NewAgent(toolBelt, chatStore, llm.NewGemini(geminiClient))
 
 	ctx := context.Background()
 
 	scanner := bufio.NewScanner(os.Stdin)
 	slog.Info("Skipery started. Type 'exit' to quit.")
 
-	convID := uuid.New().String()
+	chatID := uuid.New().String()
 
 	for {
 		fmt.Print("> ")
@@ -59,7 +59,7 @@ func main() {
 			continue
 		}
 
-		response, err := agent.SendMessage(ctx, convID, input)
+		response, err := agent.SendMessage(ctx, chatID, input)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			continue
