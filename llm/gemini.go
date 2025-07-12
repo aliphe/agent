@@ -3,6 +3,7 @@ package llm
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	"github.com/aliphe/skipery/agent/chat"
 	"github.com/aliphe/skipery/pkg/jsonschema"
@@ -145,6 +146,9 @@ func (g *Gemini) SendMessage(ctx context.Context, tb tool.ToolBelt, messages []*
 	if err != nil {
 		return nil, err
 	}
+	ctx, cancel := context.WithTimeout(ctx, time.Second*5)
+	defer cancel()
+
 	content, err := g.cli.Models.GenerateContent(
 		ctx,
 		"gemini-2.0-flash",

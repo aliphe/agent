@@ -100,8 +100,8 @@ func (c *Chat) IsNew() bool {
 	return c.isNew
 }
 
-// GetNewMessages returns messages added since chat initialization
-func (c *Chat) GetNewMessages() []*Message {
+// NewMessages returns messages added since chat initialization
+func (c *Chat) NewMessages() []*Message {
 	if c.savedIndex >= len(c.messages) {
 		return []*Message{}
 	}
@@ -110,12 +110,17 @@ func (c *Chat) GetNewMessages() []*Message {
 
 // SaveNewMessages saves only the new messages added since initialization
 func (c *Chat) SaveNewMessages(ctx context.Context) error {
-	newMessages := c.GetNewMessages()
+	newMessages := c.NewMessages()
 	if len(newMessages) == 0 {
 		return nil
 	}
 
-	return c.store.SaveMessages(ctx, c.ID, newMessages)
+	err := c.store.SaveMessages(ctx, c.ID, newMessages)
+	if err != nil {
+		return err
+	}
+	c.savedIndex = len(c.messages)
+	return nil
 }
 
 // SaveWithTitle saves the chat with a title (for new chats)
