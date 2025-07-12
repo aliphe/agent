@@ -8,6 +8,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+var _ Tool = (*SQL)(nil)
+
 type SQL struct {
 	db *sqlx.DB
 }
@@ -16,7 +18,7 @@ func NewSQL(db *sqlx.DB) *SQL {
 	return &SQL{db: db}
 }
 
-func (s *SQL) Functions() []Function {
+func (s *SQL) Functions(ctx context.Context) []Function {
 	return []Function{
 		{
 			ID:          "sql_query",

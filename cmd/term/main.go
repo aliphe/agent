@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
 	"strings"
@@ -19,25 +20,35 @@ import (
 )
 
 func main() {
-	geminiClient, err := genai.NewClient(context.Background(), &genai.ClientConfig{
+	ctx := context.Background()
+	config, err := agent.ParseConfig(ctx, "agent.json")
+	if err != nil {
+		slog.Info("parse config", "error", err)
+	}
+	geminiClient, err := genai.NewClient(ctx, &genai.ClientConfig{
 		APIKey: os.Getenv("GEMINI_API_KEY"),
 	})
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
-		return
+		log.Panicf("load gemini client: %v", err)
 	}
-
 	db, err := sqlx.Open("sqlite3", "/Users/matthias/work/skipr/skipery/skipery.db")
 	if err != nil {
-		slog.Error("error initializing database connection", "error", err)
+		log.Panicf("load database: %v", err)
 	}
 	defer db.Close()
 
-	toolBelt := tool.NewToolBelt(tool.NewUserName(), tool.NewMath(), tool.NewSQL(db))
-	chatStore := store.NewChatStore(db)
-	agent := agent.NewAgent(toolBelt, chatStore, llm.NewGemini(geminiClient))
+	tools := []tool.Tool{
+		tool.NewUserName(),
+		tool.NewMath(),
+		tool.NewSQL(db),
+	}
+	if config != nil {
+		tools = append(tools, config.MCP.Tools()...)
+	}
 
-	ctx := context.Background()
+	toolBelt := tool.NewToolBelt(tools...)
+	chatStore := store.NewChatStore(db)
+	agent := agent.NewAgent(config, toolBelt, chatStore, llm.NewGemini(geminiClient))
 
 	scanner := bufio.NewScanner(os.Stdin)
 	slog.Info("Skipery started. Type 'exit' to quit.")

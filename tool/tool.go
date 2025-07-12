@@ -9,7 +9,7 @@ import (
 )
 
 type Tool interface {
-	Functions() []Function
+	Functions(ctx context.Context) []Function
 	Call(ctx context.Context, function string, args map[string]any) (map[string]any, error)
 }
 
@@ -50,7 +50,7 @@ func NewToolBelt(tools ...Tool) ToolBelt {
 	belt := make(ToolBelt)
 
 	for _, t := range tools {
-		fs := t.Functions()
+		fs := t.Functions(context.Background())
 		for _, f := range fs {
 			belt[f.ID] = t
 		}

@@ -8,6 +8,8 @@ import (
 	"github.com/aliphe/skipery/pkg/jsonschema"
 )
 
+var _ Tool = (*UserName)(nil)
+
 type UserName struct {
 }
 
@@ -15,7 +17,7 @@ func NewUserName() *UserName {
 	return &UserName{}
 }
 
-func (un *UserName) Functions() []Function {
+func (un *UserName) Functions(ctx context.Context) []Function {
 	return []Function{
 		{
 			ID:          "user_name",

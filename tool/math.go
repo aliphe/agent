@@ -7,14 +7,15 @@ import (
 	"github.com/aliphe/skipery/pkg/jsonschema"
 )
 
-type Math struct {
-}
+var _ Tool = (*Math)(nil)
+
+type Math struct{}
 
 func NewMath() *Math {
 	return &Math{}
 }
 
-func (h *Math) Functions() []Function {
+func (h *Math) Functions(ctx context.Context) []Function {
 	return []Function{
 		{
 			ID:          "sum",

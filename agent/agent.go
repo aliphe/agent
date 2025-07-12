@@ -14,13 +14,15 @@ type Model interface {
 }
 
 type Agent struct {
+	config    *Config
 	toolBelt  tool.ToolBelt
 	chatStore chat.Store
 	model     Model
 }
 
-func NewAgent(tools tool.ToolBelt, chatStore chat.Store, model Model) *Agent {
+func NewAgent(config *Config, tools tool.ToolBelt, chatStore chat.Store, model Model) *Agent {
 	return &Agent{
+		config:    config,
 		toolBelt:  tools,
 		chatStore: chatStore,
 		model:     model,

@@ -71,7 +71,7 @@ func fromToolBelt(tb tool.ToolBelt) ([]*genai.Tool, error) {
 		toolMap[t] = true
 
 		var functionDeclarations []*genai.FunctionDeclaration
-		for _, fct := range t.Functions() {
+		for _, fct := range t.Functions(context.Background()) {
 			functionDeclarations = append(functionDeclarations, &genai.FunctionDeclaration{
 				Name:        fct.ID,
 				Description: fct.Description,
