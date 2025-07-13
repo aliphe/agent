@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 	"time"
 
 	"github.com/aliphe/skipery/agent/chat"
@@ -97,7 +96,6 @@ func (s *ChatStore) SaveMessages(ctx context.Context, id string, messages []*cha
 		if err != nil {
 			return fmt.Errorf("marshal function responses: %w", err)
 		}
-		slog.Info("marshalled complex fields", "fc", fc, "fr", fr)
 		m := &message{
 			ID:                uuid.New().String(),
 			ChatID:            id,

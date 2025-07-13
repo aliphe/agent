@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Skipery is a command-line AI agent built in Go that provides an interactive chat interface with tool calling capabilities. The agent uses Google's Gemini AI model and persists conversations to a SQLite database.
+A command-line AI agent built in Go that provides an interactive chat interface with tool calling capabilities. The agent uses Google's Gemini AI model and persists conversations to a SQLite database.
 
 ## Key Architecture
 
@@ -54,7 +54,9 @@ make migrate-down
 ```
 
 ### Environment Setup
-Requires `GEMINI_API_KEY` environment variable for Google Gemini API access.
+Required environment variables:
+- `GEMINI_API_KEY` - Google Gemini API access key
+- `DB_PATH` - SQLite database file path (optional, defaults to `./agent.db`)
 
 ## Development Notes
 
@@ -64,7 +66,7 @@ Requires `GEMINI_API_KEY` environment variable for Google Gemini API access.
 3. Add to `NewToolBelt()` in `cmd/term/main.go:36`
 
 ### Database Path
-Currently hardcoded to `/Users/matthias/work/skipr/skipery/skipery.db` in `cmd/term/main.go:30`
+Configurable via `DB_PATH` environment variable, defaults to `./agent.db` (see `cmd/term/main.go:34`)
 
 ### LLM Model
 Uses `gemini-2.5-flash-lite-preview-06-17` model (see `llm/gemini.go:109`)

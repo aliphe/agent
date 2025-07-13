@@ -31,7 +31,11 @@ func main() {
 	if err != nil {
 		log.Panicf("load gemini client: %v", err)
 	}
-	db, err := sqlx.Open("sqlite3", "/Users/matthias/work/skipr/skipery/skipery.db")
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "./agent.db"
+	}
+	db, err := sqlx.Open("sqlite3", dbPath)
 	if err != nil {
 		log.Panicf("load database: %v", err)
 	}
@@ -51,7 +55,7 @@ func main() {
 	agent := agent.NewAgent(config, toolBelt, chatStore, llm.NewGemini(geminiClient))
 
 	scanner := bufio.NewScanner(os.Stdin)
-	slog.Info("Skipery started. Type 'exit' to quit.")
+	slog.Info("Agent started. Type 'exit' to quit.")
 
 	chatID := uuid.New().String()
 
