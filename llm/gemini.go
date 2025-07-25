@@ -146,14 +146,23 @@ func (g *Gemini) SendMessage(ctx context.Context, tb tool.ToolBelt, messages []*
 	if err != nil {
 		return nil, err
 	}
-	ctx, cancel := context.WithTimeout(ctx, time.Second*5)
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*60)
 	defer cancel()
 
 	content, err := g.cli.Models.GenerateContent(
 		ctx,
 		"gemini-2.0-flash",
 		history,
-		&genai.GenerateContentConfig{Tools: tools},
+		&genai.GenerateContentConfig{Tools: tools,
+			SystemInstruction: &genai.Content{
+				Parts: []*genai.Part{
+					{
+						Text: "You are a helpful assistant that showcases the proper use of system-provided tools, use them as much as possible.",
+					},
+				},
+			},
+		},
 	)
 	if err != nil {
 		return nil, err
